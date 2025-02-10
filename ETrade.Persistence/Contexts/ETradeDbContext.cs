@@ -5,7 +5,7 @@ namespace ETrade.Persistence.Contexts
 {
     public class ETradeDbContext : DbContext
     {
-        public ETradeDbContext(DbContextOptions options) : base(options)
+        public ETradeDbContext(DbContextOptions<ETradeDbContext> options) : base(options)
         {            
         }
 

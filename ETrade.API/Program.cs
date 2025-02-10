@@ -1,4 +1,7 @@
 
+using ETrade.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace ETrade.API
 {
     public class Program
@@ -7,11 +10,13 @@ namespace ETrade.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
             builder.Services.AddOpenApi();
+
+            // Database connection
+            builder.Services.AddDbContext<ETradeDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL") + ";TrustServerCertificate=True"));
 
             var app = builder.Build();
 

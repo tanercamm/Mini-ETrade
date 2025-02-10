@@ -8,8 +8,8 @@ namespace ETrade.Domain.Repositories
 
         // Sorgu için IQueryable (where). Eğer Memory ise IEnumable || List mantıklı olacaktır
 
-        Task<IQueryable<T>> GetAllAsync();
+        IQueryable<T> GetAll();
 
-        Task<T> GetByIdAsync(string id); // id guid olarak tanımlandığından string ile algılayacağız
+        Task<T?> GetByIdAsync(string id); // id guid olarak tanımlandığından string ile algılayacağız
     }
 }

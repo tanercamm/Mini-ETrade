@@ -8,9 +8,9 @@ namespace ETrade.Domain.Repositories
 
         Task AddAsync(T entity);
 
-        Task UpdateAsync(T entity);
+        Task Update(T entity);
 
-        Task DeleteAsync(T entity);
+        Task Delete(T entity);
 
         Task SaveChangesAsync();
     }
