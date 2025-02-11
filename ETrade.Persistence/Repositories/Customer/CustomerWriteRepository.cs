@@ -1,11 +1,11 @@
 ﻿using ETrade.Domain.Repositories.Customer;
-using Microsoft.EntityFrameworkCore;
+using ETrade.Persistence.Contexts;
 
 namespace ETrade.Infrastructure.Repositories.Customer
 {
     public class CustomerWriteRepository : WriteRepository<Domain.Entities.Customer>, ICustomerWriteRepository
     {
-        public CustomerWriteRepository(DbContext context) : base(context)
+        public CustomerWriteRepository(ETradeDbContext context) : base(context)
         {
         }
     }

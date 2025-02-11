@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ETrade.Application\ETrade.Application.csproj" />
     <ProjectReference Include="..\ETrade.Domain\ETrade.Domain.csproj" />
-    <ProjectReference Include="..\ETrade.Infrastructure\ETrade.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,13 @@
 ﻿using ETrade.Domain.Entities.Common;
 using ETrade.Domain.Repositories;
+using ETrade.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace ETrade.Infrastructure.Repositories
 {
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {
-        protected readonly DbContext _context;
+        protected readonly ETradeDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
         public ReadRepository(ETradeDbContext context)
