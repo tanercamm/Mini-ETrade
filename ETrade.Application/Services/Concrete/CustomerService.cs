@@ -27,7 +27,9 @@ namespace ETrade.Application.Services.Concrete
                 Id = customer.Id,
                 Name = customer.Name,
                 Email = customer.Email,
-                Phone = customer.Phone
+                Phone = customer.Phone,
+                CreatedDate = customer.CreatedDate,
+                UpdatedDate = customer.UpdatedDate
             }).ToList();
         }
 
@@ -48,7 +50,7 @@ namespace ETrade.Application.Services.Concrete
                 Phone = customerEntity.Phone,
                 CreatedDate = customerEntity.CreatedDate,
                 UpdatedDate = customerEntity.UpdatedDate,
-                Orders = customerEntity.Orders.Select(order => new OrderBaseDTO
+                Orders = customerEntity.Orders?.Select(order => new OrderBaseDTO
                 {
                     Id = order.Id,
                     Description = order.Description,
@@ -68,8 +70,9 @@ namespace ETrade.Application.Services.Concrete
                 Name = customerDTO.Name,
                 Email = customerDTO.Email,
                 Phone = customerDTO.Phone,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
+                Orders = new List<Order>()
             };
 
             await _customerWriteRepository.AddAsync(customer);
@@ -88,7 +91,7 @@ namespace ETrade.Application.Services.Concrete
             customer.Name = customerDTO.Name;
             customer.Email = customerDTO.Email;
             customer.Phone = customerDTO.Phone;
-            customer.UpdatedDate = DateTime.Now;
+            customer.UpdatedDate = DateTime.UtcNow;
 
             await _customerWriteRepository.Update(customer);
             await _customerWriteRepository.SaveChangesAsync();

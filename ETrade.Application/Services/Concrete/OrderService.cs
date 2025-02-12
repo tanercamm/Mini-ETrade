@@ -26,7 +26,9 @@ namespace ETrade.Application.Services.Concrete
             {
                 Id = order.Id,
                 Description = order.Description,
-                Address = order.Address
+                Address = order.Address,
+                CreatedDate = order.CreatedDate,
+                UpdatedDate = order.UpdatedDate
             }).ToList();
         }
 
@@ -46,7 +48,7 @@ namespace ETrade.Application.Services.Concrete
                 Address = orderEntity.Address,
                 CreatedDate = orderEntity.CreatedDate,
                 UpdatedDate = orderEntity.UpdatedDate,
-                Customer = new CustomerBaseDTO
+                Customer = orderEntity.Customer != null ? new CustomerBaseDTO
                 {
                     Id = orderEntity.Customer.Id,
                     Name = orderEntity.Customer.Name,
@@ -54,7 +56,7 @@ namespace ETrade.Application.Services.Concrete
                     Phone = orderEntity.Customer.Phone,
                     CreatedDate = orderEntity.Customer.CreatedDate,
                     UpdatedDate = orderEntity.Customer.UpdatedDate
-                }
+                } : null
             };
         }
 
@@ -65,8 +67,10 @@ namespace ETrade.Application.Services.Concrete
                 Id = Guid.NewGuid(),
                 Description = orderDTO.Description,
                 Address = orderDTO.Address,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
+                Products = new List<Product>(),
+                CustomerId = orderDTO.CustomerId
             };
 
             await _orderWriteRepository.AddAsync(order);
@@ -84,7 +88,7 @@ namespace ETrade.Application.Services.Concrete
 
             order.Description = orderDTO.Description;
             order.Address = orderDTO.Address;
-            order.UpdatedDate = DateTime.Now;
+            order.UpdatedDate = DateTime.UtcNow;
 
             await _orderWriteRepository.Update(order);
             await _orderWriteRepository.SaveChangesAsync();

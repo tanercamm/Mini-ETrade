@@ -25,6 +25,8 @@ namespace ETrade.API
 
             builder.Services.AddOpenApi();
 
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             // Database connection
             builder.Services.AddDbContext<ETradeDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL") + ";TrustServerCertificate=True"));

@@ -27,9 +27,10 @@ namespace ETrade.Application.Services.Concrete
                 Id = product.Id,
                 Name = product.Name,
                 Price = (decimal)product.Price, // postgre sebebiyle hata fırlatıyor
-                Stock = product.Stock
+                Stock = product.Stock,
+                CreatedDate = product.CreatedDate,
+                UpdatedDate = product.UpdatedDate
             }).ToList();
-
         }
 
         public async Task<ProductDTO> GetByIdAsync(string id)
@@ -49,7 +50,7 @@ namespace ETrade.Application.Services.Concrete
                 Stock = productEntity.Stock,
                 CreatedDate = productEntity.CreatedDate,
                 UpdatedDate = productEntity.UpdatedDate,
-                Orders = productEntity.Orders.Select(order => new OrderBaseDTO
+                Orders = productEntity.Orders?.Select(order => new OrderBaseDTO
                 {
                     Id = order.Id,
                     Description = order.Description,
@@ -67,8 +68,9 @@ namespace ETrade.Application.Services.Concrete
                 Name = productDTO.Name,
                 Price = productDTO.Price,
                 Stock = productDTO.Stock,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
+                Orders = new List<Order>()
             };
 
             await _productWriteRepository.AddAsync(product);
@@ -87,7 +89,7 @@ namespace ETrade.Application.Services.Concrete
             product.Name = productDTO.Name;
             product.Price = productDTO.Price;
             product.Stock = productDTO.Stock;
-            product.UpdatedDate = DateTime.Now;
+            product.UpdatedDate = DateTime.UtcNow;
 
             await _productWriteRepository.Update(product);
             await _productWriteRepository.SaveChangesAsync();

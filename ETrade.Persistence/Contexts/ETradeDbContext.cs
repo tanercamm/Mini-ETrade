@@ -1,4 +1,5 @@
 ﻿using ETrade.Domain.Entities;
+using ETrade.Domain.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace ETrade.Persistence.Contexts
@@ -12,5 +13,6 @@ namespace ETrade.Persistence.Contexts
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Customer> Customers { get; set; }
+
     }
 }
