@@ -52,11 +52,11 @@ namespace ETrade.Application.Services.Concrete
                 UpdatedDate = productEntity.UpdatedDate,
                 Orders = productEntity.Orders?.Select(order => new OrderBaseDTO
                 {
-                    Id = order.Id,
-                    Description = order.Description,
-                    Address = order.Address,
-                    CreatedDate = order.CreatedDate,
-                    UpdatedDate = order.UpdatedDate
+                    Id = order.Order.Id,
+                    Description = order.Order.Description,
+                    Address = order.Order.Address,
+                    CreatedDate = order.Order.CreatedDate,
+                    UpdatedDate = order.Order.UpdatedDate
                 }).ToList()
             };
         }
@@ -70,7 +70,7 @@ namespace ETrade.Application.Services.Concrete
                 Stock = productDTO.Stock,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
-                Orders = new List<Order>()
+                Orders = new List<OrderProduct>()
             };
 
             await _productWriteRepository.AddAsync(product);

@@ -9,11 +9,11 @@ namespace ETrade.Domain.Entities
 
         public string Address { get; set; }
 
-        public ICollection<Product> Products { get; set; }
-
         public Guid CustomerId { get; set; }
 
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
+
+        public ICollection<OrderProduct> Products { get; set; }
     }
 }

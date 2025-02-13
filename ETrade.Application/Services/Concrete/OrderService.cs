@@ -1,5 +1,6 @@
 ﻿using ETrade.Application.DTOs.Customer;
 using ETrade.Application.DTOs.Order;
+using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
 using ETrade.Domain.Entities;
 using ETrade.Domain.Repositories.Order;
@@ -34,7 +35,13 @@ namespace ETrade.Application.Services.Concrete
 
         public async Task<OrderDTO> GetByIdAsync(string id)
         {
-            var orderEntity = await _orderReadRepository.GetByIdAsync(id);
+            //var orderEntity = await _orderReadRepository.GetByIdAsync(id);
+
+            var orderEntity = _orderReadRepository.GetAll()
+                .Include(o => o.Customer)
+                .Include(o => o.Products)
+                .ThenInclude(p => p.Product)
+                .FirstOrDefault(o => o.Id == id);
 
             if (orderEntity == null)
             {
@@ -56,7 +63,15 @@ namespace ETrade.Application.Services.Concrete
                     Phone = orderEntity.Customer.Phone,
                     CreatedDate = orderEntity.Customer.CreatedDate,
                     UpdatedDate = orderEntity.Customer.UpdatedDate
-                } : null
+                } : null,
+                Products = orderEntity.Products.Select(p => new ProductBaseDTO
+                {
+                    Id = p.Product.Id,
+                    Name = p.Product.Name,
+                    Price = p.Product.Price,
+                    CreatedDate = p.Product.CreatedDate,
+                    UpdatedDate = p.Product.UpdatedDate
+                }).ToList()
             };
         }
 
@@ -69,9 +84,18 @@ namespace ETrade.Application.Services.Concrete
                 Address = orderDTO.Address,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
-                Products = new List<Product>(),
-                CustomerId = orderDTO.CustomerId
+                CustomerId = orderDTO.CustomerId,
+                Products = new List<OrderProduct>()
             };
+
+            foreach (var productId in orderDTO.ProductIds)
+            {
+                order.Products.Add(new OrderProduct
+                {
+                    ProductId = productId,
+                    OrderId = order.Id
+                });
+            }
 
             await _orderWriteRepository.AddAsync(order);
             await _orderWriteRepository.SaveChangesAsync();

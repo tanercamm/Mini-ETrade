@@ -10,6 +10,6 @@ namespace ETrade.Domain.Entities
 
         public decimal Price { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<OrderProduct> Orders { get; set; }
     }
 }

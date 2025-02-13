@@ -1,5 +1,6 @@
 ﻿using ETrade.Application.DTOs.Customer;
 using ETrade.Application.DTOs.Order;
+using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
 using ETrade.Domain.Entities;
 using ETrade.Domain.Repositories.Customer;
@@ -56,8 +57,13 @@ namespace ETrade.Application.Services.Concrete
                     Description = order.Description,
                     Address = order.Address,
                     CreatedDate = order.CreatedDate,
-                    UpdatedDate = order.UpdatedDate
-
+                    UpdatedDate = order.UpdatedDate,
+                    Products = order.Products?.Select(product => new ProductBaseDTO
+                    {
+                        Id = product.Product.Id,
+                        Name = product.Product.Name,
+                        Price = product.Product.Price
+                    }).ToList()
                 }).ToList()
             };
         }
