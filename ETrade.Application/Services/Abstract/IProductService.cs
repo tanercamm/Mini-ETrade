@@ -10,7 +10,7 @@ namespace ETrade.Application.Services.Abstract
 
         Task AddAsync(CreateProductDTO productDTO);
 
-        Task UpdateAsync(UpdateProductDTO productDTO);
+        Task UpdateAsync(string id, UpdateProductDTO productDTO);
 
         Task DeleteAsync(string id);
     }

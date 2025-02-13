@@ -47,12 +47,12 @@ namespace ETrade.API.Controllers
 
         // PUT: api/customer/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, UpdateCustomerDTO customerDto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCustomerDTO customerDto)
         {
-            if (customerDto == null || id != customerDto.Id.ToString())
+            if (customerDto == null)
                 return BadRequest("Invalid request data.");
 
-            await _customerService.UpdateAsync(customerDto);
+            await _customerService.UpdateAsync(id, customerDto);
             return NoContent();
         }
 

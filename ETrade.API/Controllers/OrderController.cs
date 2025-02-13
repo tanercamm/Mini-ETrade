@@ -49,10 +49,10 @@ namespace ETrade.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, UpdateOrderDTO orderDto)
         {
-            if (orderDto == null || id != orderDto.Id.ToString())
+            if (orderDto == null)
                 return BadRequest("Invalid request data.");
 
-            await _orderService.UpdateAsync(orderDto);
+            await _orderService.UpdateAsync(id, orderDto);
             return NoContent();
         }
 

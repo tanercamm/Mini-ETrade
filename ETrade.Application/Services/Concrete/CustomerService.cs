@@ -79,9 +79,9 @@ namespace ETrade.Application.Services.Concrete
             await _customerWriteRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(UpdateCustomerDTO customerDTO)
+        public async Task UpdateAsync(string id, UpdateCustomerDTO customerDTO)
         {
-            var customer = await _customerReadRepository.GetByIdAsync(customerDTO.Id.ToString());
+            var customer = await _customerReadRepository.GetByIdAsync(id);
 
             if (customer == null)
             {

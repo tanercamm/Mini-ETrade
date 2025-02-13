@@ -77,9 +77,9 @@ namespace ETrade.Application.Services.Concrete
             await _orderWriteRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(UpdateOrderDTO orderDTO)
+        public async Task UpdateAsync(string id, UpdateOrderDTO orderDTO)
         {
-            var order = await _orderReadRepository.GetByIdAsync(orderDTO.Id.ToString());
+            var order = await _orderReadRepository.GetByIdAsync(id);
 
             if (order == null)
             {
