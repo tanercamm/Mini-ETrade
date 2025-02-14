@@ -20,6 +20,8 @@ namespace ETrade.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerService.GetAll();
+            if(customers == null)
+                return NotFound("Customers not found.");
             return Ok(customers);
         }
 

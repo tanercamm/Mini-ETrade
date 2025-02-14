@@ -4,6 +4,7 @@ using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
 using ETrade.Domain.Entities;
 using ETrade.Domain.Repositories.Order;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETrade.Application.Services.Concrete
 {
@@ -35,17 +36,15 @@ namespace ETrade.Application.Services.Concrete
 
         public async Task<OrderDTO> GetByIdAsync(string id)
         {
-            //var orderEntity = await _orderReadRepository.GetByIdAsync(id);
-
             var orderEntity = _orderReadRepository.GetAll()
                 .Include(o => o.Customer)
                 .Include(o => o.Products)
                 .ThenInclude(p => p.Product)
-                .FirstOrDefault(o => o.Id == id);
+                .FirstOrDefault(o => o.Id == Guid.Parse(id));
 
             if (orderEntity == null)
             {
-                throw new Exception("Order not found");
+                return null;
             }
 
             return new OrderDTO
@@ -113,6 +112,21 @@ namespace ETrade.Application.Services.Concrete
             order.Description = orderDTO.Description;
             order.Address = orderDTO.Address;
             order.UpdatedDate = DateTime.UtcNow;
+
+            if (order.Products == null)
+            {
+                order.Products = new List<OrderProduct>();
+            }
+
+            order.Products.Clear();
+            foreach (var productId in orderDTO.ProductIds)
+            {
+                order.Products.Add(new OrderProduct
+                {
+                    ProductId = productId,
+                    OrderId = order.Id
+                });
+            }
 
             await _orderWriteRepository.Update(order);
             await _orderWriteRepository.SaveChangesAsync();

@@ -3,6 +3,7 @@ using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
 using ETrade.Domain.Entities;
 using ETrade.Domain.Repositories.Product;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETrade.Application.Services.Concrete
 {
@@ -26,7 +27,7 @@ namespace ETrade.Application.Services.Concrete
             {
                 Id = product.Id,
                 Name = product.Name,
-                Price = (decimal)product.Price, // postgre sebebiyle hata fırlatıyor
+                Price = product.Price,
                 Stock = product.Stock,
                 CreatedDate = product.CreatedDate,
                 UpdatedDate = product.UpdatedDate
@@ -35,11 +36,14 @@ namespace ETrade.Application.Services.Concrete
 
         public async Task<ProductDTO> GetByIdAsync(string id)
         {
-            var productEntity = await _productReadRepository.GetByIdAsync(id);
+            var productEntity = _productReadRepository.GetAll()
+                .Include(o => o.Orders)
+                .ThenInclude(o => o.Order)
+                .FirstOrDefault(o => o.Id == Guid.Parse(id));
 
             if (productEntity == null)
             {
-                throw new Exception("Product not found");
+                return null;
             }
 
             return new ProductDTO

@@ -4,6 +4,7 @@ using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
 using ETrade.Domain.Entities;
 using ETrade.Domain.Repositories.Customer;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETrade.Application.Services.Concrete
 {
@@ -36,11 +37,13 @@ namespace ETrade.Application.Services.Concrete
 
         public async Task<CustomerDTO> GetByIdAsync(string id)
         {
-            var customerEntity = await _customerReadRepository.GetByIdAsync(id);
+            var customerEntity = _customerReadRepository.GetAll()
+                .Include(o => o.Orders)
+                .FirstOrDefault(o => o.Id == Guid.Parse(id));
 
             if (customerEntity == null)
             {
-                throw new Exception("Customer not found");
+                return null;
             }
 
             return new CustomerDTO

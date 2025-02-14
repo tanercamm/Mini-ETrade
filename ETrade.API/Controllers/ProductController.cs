@@ -20,6 +20,8 @@ namespace ETrade.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAll();
+            if (products == null)
+                return NotFound("Products not found.");
             return Ok(products);
         }
 
