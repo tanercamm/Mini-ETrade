@@ -18,6 +18,14 @@ namespace ETrade.API.Controllers
             _authService = authService;
         }
 
+        [HttpPost("assign-role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignRole(AssignRoleDTO assignRoleDto)
+        {
+            var result = await _authService.AssignRoleAsync(assignRoleDto);
+            return result ? Ok("Role assigned.") : BadRequest("The role could not be assigned.");
+        }
+
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetUser()
@@ -26,14 +34,14 @@ namespace ETrade.API.Controllers
                  ?? User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
             if (userId == null)
-                return Unauthorized("Kimlik doğrulama hatası.");
+                return Unauthorized("Authentication error.");
 
             if (!Guid.TryParse(userId, out var guidUserId))
-                return BadRequest("Geçersiz kullanıcı ID formatı.");
+                return BadRequest("Invalid user ID format.");
 
             var user = await _authService.GetUserByIdAsync(guidUserId);
             if (user == null)
-                return NotFound("Kullanıcı bulunamadı.");
+                return NotFound("User not found.");
 
             return Ok(user);
         }
@@ -42,7 +50,7 @@ namespace ETrade.API.Controllers
         public async Task<IActionResult> Login(LoginDTO loginDto)
         {
             var token = await _authService.LoginAsync(loginDto);
-            if (token == null) return Unauthorized("Geçersiz giriş.");
+            if (token == null) return Unauthorized("Invalid entry.");
 
             return Ok(new { Token = token });
         }
@@ -51,9 +59,9 @@ namespace ETrade.API.Controllers
         public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
             var result = await _authService.RegisterAsync(registerDto);
-            if (!result) return BadRequest("Kullanıcı kaydı başarısız.");
+            if (!result) return BadRequest("User registration failed.");
 
-            return Ok("Kullanıcı başarıyla kaydedildi.");
+            return Ok("The user has been successfully registered.");
         }
     }
 }

@@ -54,7 +54,7 @@ namespace ETrade.Application.Services.Concrete
         public async Task<bool> RegisterAsync(RegisterDTO registerDTO)
         {
             if (string.IsNullOrWhiteSpace(registerDTO.Email) || string.IsNullOrWhiteSpace(registerDTO.Password))
-                throw new ArgumentException("Email ve şifre boş olamaz.");
+                throw new ArgumentException("Email and password cannot be blank.");
 
             var user = new User
             {
@@ -72,11 +72,24 @@ namespace ETrade.Application.Services.Concrete
             if (!roleResult.Succeeded)
             {
                 var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                throw new Exception($"Rol atanamadı: {roleErrors}");
+                throw new Exception($"Role could not be assigned: {roleErrors}");
             }
 
             return true;
         }
+
+        public async Task<bool> AssignRoleAsync(AssignRoleDTO assignRoleDto)
+        {
+            var user = await _userManager.FindByIdAsync(assignRoleDto.UserId.ToString());
+            if (user == null) return false;
+
+            var roleExists = await _userManager.IsInRoleAsync(user, assignRoleDto.Role);
+            if (roleExists) return false;
+
+            var result = await _userManager.AddToRoleAsync(user, assignRoleDto.Role);
+            return result.Succeeded;
+        }
+
 
         private string GenerateJwtToken(User user)
         {
@@ -97,8 +110,8 @@ namespace ETrade.Application.Services.Concrete
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: issuer,              // Issuer eklendi
-                audience: audience,          // Audience eklendi
+                issuer: issuer,              
+                audience: audience,          
                 claims: authClaims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials
