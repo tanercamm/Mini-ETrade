@@ -1,5 +1,6 @@
 ﻿using ETrade.Application.DTOs.Product;
 using ETrade.Application.Services.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETrade.API.Controllers
@@ -16,6 +17,7 @@ namespace ETrade.API.Controllers
         }
 
         // GET: api/product
+        [Authorize(Roles ="Admin,Customer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -26,6 +28,7 @@ namespace ETrade.API.Controllers
         }
 
         // GET: api/product/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -37,6 +40,7 @@ namespace ETrade.API.Controllers
         }
 
         // POST: api/product
+        [Authorize("Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductDTO productDto)
         {
@@ -48,6 +52,7 @@ namespace ETrade.API.Controllers
         }
 
         // PUT: api/product/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, UpdateProductDTO productDto)
         {
@@ -59,6 +64,7 @@ namespace ETrade.API.Controllers
         }
 
         // DELETE: api/product/{id}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

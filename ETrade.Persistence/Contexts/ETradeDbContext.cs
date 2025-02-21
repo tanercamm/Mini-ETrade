@@ -1,14 +1,19 @@
 ﻿using ETrade.Domain.Entities;
-using ETrade.Domain.Entities.Common;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace ETrade.Persistence.Contexts
 {
-    public class ETradeDbContext : DbContext
+    public class ETradeDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid,
+        IdentityUserClaim<Guid>,
+        IdentityUserRole<Guid>,
+        IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>,
+        IdentityUserToken<Guid>>
     {
-        public ETradeDbContext(DbContextOptions<ETradeDbContext> options) : base(options)
-        {
-        }
+        public ETradeDbContext(DbContextOptions<ETradeDbContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -16,6 +21,8 @@ namespace ETrade.Persistence.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             // Customer silinirse, ona ait Order'lar da silinecek
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Customer)
