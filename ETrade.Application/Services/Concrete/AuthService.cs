@@ -23,13 +23,17 @@ namespace ETrade.Application.Services.Concrete
             _configuration = configuration;
         }
 
-        public async Task<UserDTO?> GetUserByIdAsync(Guid id)
+        public async Task<UserDTO?> GetUserByIdAsync(Guid requestedUserId, Guid requesterUserId, bool isRequesterAdmin)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (requestedUserId != requesterUserId && !isRequesterAdmin)
+                return null;
+
+            var user = await _userManager.FindByIdAsync(requestedUserId.ToString());
             if (user == null)
                 return null;
 
             var roles = await _userManager.GetRolesAsync(user);
+
             return new UserDTO
             {
                 Id = user.Id,
@@ -37,6 +41,7 @@ namespace ETrade.Application.Services.Concrete
                 Role = roles.FirstOrDefault() ?? "Customer"
             };
         }
+
 
         public async Task<string?> LoginAsync(LoginDTO loginDTO)
         {
@@ -48,7 +53,7 @@ namespace ETrade.Application.Services.Concrete
             if (!result.Succeeded)
                 return null;
 
-            return GenerateJwtToken(user);
+            return await GenerateJwtToken(user);
         }
 
         public async Task<bool> RegisterAsync(RegisterDTO registerDTO)
@@ -91,13 +96,16 @@ namespace ETrade.Application.Services.Concrete
         }
 
 
-        private string GenerateJwtToken(User user)
+        private async Task<string> GenerateJwtToken(User user)
         {
             var authClaims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Email, user.Email)
-    };
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var secret = _configuration["JwtSettings:Secret"];
             var issuer = _configuration["JwtSettings:Issuer"];

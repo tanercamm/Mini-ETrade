@@ -41,17 +41,17 @@ namespace ETrade.Persistence.Configurations
                 if (createResult.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
-                    Console.WriteLine("✅ Varsayılan admin oluşturuldu.");
+                    Console.WriteLine("Default admin created.");
                 }
                 else
                 {
                     var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                    Console.WriteLine($"❌ Admin oluşturulamadı: {errors}");
+                    Console.WriteLine($"Failed to create admin: {errors}");
                 }
             }
             else
             {
-                Console.WriteLine("ℹ️ Varsayılan admin zaten mevcut.");
+                Console.WriteLine("The default admin already exists.");
             }
         }
     }

@@ -8,7 +8,7 @@ namespace ETrade.Application.Services.Abstract
 
         Task<string?> LoginAsync(LoginDTO loginDTO);
 
-        Task<UserDTO?> GetUserByIdAsync(Guid id);
+        Task<UserDTO?> GetUserByIdAsync(Guid id, Guid requesterUserId, bool isRequesterAdmin);
 
         Task<bool> AssignRoleAsync(AssignRoleDTO assignRoleDto);
     }

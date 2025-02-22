@@ -28,23 +28,26 @@ namespace ETrade.API.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUser()
+        public async Task<IActionResult> GetUserById(Guid id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                 ?? User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            var tokenUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-            if (userId == null)
+            if (tokenUserId == null)
                 return Unauthorized("Authentication error.");
 
-            if (!Guid.TryParse(userId, out var guidUserId))
+            if (!Guid.TryParse(tokenUserId, out var guidTokenUserId))
                 return BadRequest("Invalid user ID format.");
 
-            var user = await _authService.GetUserByIdAsync(guidUserId);
+            var isAdmin = User.IsInRole("Admin");
+
+            var user = await _authService.GetUserByIdAsync(id, guidTokenUserId, isAdmin);
             if (user == null)
-                return NotFound("User not found.");
+                return Forbid("You are not authorized to access this user's information.");
 
             return Ok(user);
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO loginDto)
